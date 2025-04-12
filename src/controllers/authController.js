@@ -62,12 +62,12 @@ const sendNewMail = async (email, firstname, res) => {
   
   <!-- Header -->
   <div style="text-align: center; background: linear-gradient(135deg, #007bff, #0056b3); padding: 20px; border-radius: 10px 10px 0 0;">
-    <h2 style="color: #fff; margin: 0; font-size: 24px;">Welcome to <span style="color: #ffd700;">Tixhub ${firstname}</span> 🎟️</h2>
+    <h2 style="color: #fff; margin: 0; font-size: 24px;">Welcome to <span style="color: #ffd700;">Tixhub</span> 🎟️</h2>
   </div>
   
   <!-- Body -->
   <div style="padding: 20px; background-color: #fff; border-radius: 0 0 10px 10px; text-align: center;">
-    <p style="font-size: 16px; color: #333;">Thank you for signing up! Now you can access exciting events.</p>
+    <p style="font-size: 16px; color: #333;">Thank you for signing up ${firstname}! Now you can access exciting events.</p>
 
     <br/>
     <p style="font-size: 14px; color: #777;">Best regards,</p>
