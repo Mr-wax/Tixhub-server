@@ -52,12 +52,12 @@ const sendNewMail = async (email, firstname, res) => {
   });
   const mailOptions = {
     from: {
-      name: "Ticketdorm",
+      name: "Tixhub",
       address: process.env.EMAIL_USER,
     },
     to: email,
     subject: "e-Ticket",
-    text: `Welcome to Ticketdorm.`,
+    text: `Welcome to Tixhub.`,
     html: `
             <h2>Welcome to Ticketdorm, ${firstname}!</h2>
             <p>Thank you for signing up for our platform. We are excited to have you on board.</p>
@@ -126,16 +126,41 @@ export const signUp = async (req, res) => {
 
       const mailOptions = {
         from: {
-          name: "Ticketdorm",
+          name: "Tixhub",
           address: process.env.EMAIL_USER,
         },
         to: email,
         subject: "e-Ticket",
         text: `Your OTP for two-step verification is ${otp}. It will expire in 1 hour.`,
-        html: `
-                      <h2>Welcome to Ticketdorm, ${firstname}!</h2>
-                      <p>Your OTP for two-step verification is <strong>${otp}</strong>. It will expire in 1 hour.</p>
-                  `,
+        html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border-radius: 10px; background-color: #f4f4f4;">
+  
+  <!-- Header -->
+  <div style="text-align: center; background: linear-gradient(135deg, #007bff, #0056b3); padding: 20px; border-radius: 10px 10px 0 0;">
+    <h2 style="color: #fff; margin: 0; font-size: 24px;">Welcome to <span style="color: #ffd700;">Tixhub</span> 🎟️</h2>
+  </div>
+  
+  <!-- Body -->
+  <div style="padding: 20px; background-color: #fff; border-radius: 0 0 10px 10px; text-align: center;">
+    <p style="font-size: 16px; color: #333;">Thank you for signing up! Use the OTP below to verify your email and access exciting events.</p>
+
+    <!-- OTP Box -->
+    <div style="font-size: 26px; font-weight: bold; color: #007bff; background-color: #f8f9fa; padding: 15px; border-radius: 8px; display: inline-block; margin: 20px auto; border: 2px dashed #007bff;">
+      ${otp}
+    </div>
+
+    <p style="font-size: 14px; color: #555;">This OTP is valid for <strong>5 minutes</strong>. If you did not request this, please ignore this email.</p>
+
+    <br/>
+    <p style="font-size: 14px; color: #777;">Best regards,</p>
+    <p style="font-size: 16px; font-weight: bold; color: #007bff;">Tixhub Team</p>
+
+    <!-- Footer -->
+    <div style="margin-top: 20px; font-size: 12px; color: #aaa; text-align: center;">
+      <p>&copy; 2025 Tixhub. All rights reserved.</p>
+    </div>
+  </div>
+</div>
+ `
       };
 
       const info = await transporter.sendMail(mailOptions);
@@ -199,16 +224,27 @@ export const resetPasswordMail = async (req, res) => {
     }
     const mailOptions = {
       from: {
-        name: "Ticketdorm",
+        name: "Tixhub",
         address: process.env.EMAIL_USER,
       },
       to: user.email,
       subject: "Account password reset",
       text: `Password Reset`,
-      html: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-        Please click on the following link, or paste this into your browser to complete the process:\n\n
-        ${resetURL}\n\n
-        If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+      html: ` <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border-radius: 10px; background-color: #f4f4f4;">
+        <div style="text-align: center; background: linear-gradient(135deg, #007bff, #0056b3); padding: 20px; border-radius: 10px 10px 0 0;">
+          <h2 style="color: #fff; margin: 0;">Password Reset Request</h2>
+        </div>
+        <div style="padding: 20px; background-color: #fff; border-radius: 0 0 10px 10px; text-align: center;">
+          <p style="font-size: 16px; color: #333;">You requested a password reset. Use the OTP below to reset your password.</p>
+          <div style="font-size: 26px; font-weight: bold; color: #007bff; background-color: #f8f9fa; padding: 15px; border-radius: 8px; display: inline-block; margin: 20px auto; border: 2px dashed #007bff;">
+            ${resetURL}
+          </div>
+          <p style="font-size: 14px; color: #555;">This OTP is valid for <strong>5 minutes</strong>. If you did not request this, please ignore this email.</p>
+          <p style="font-size: 14px; color: #777;">Best regards,</p>
+          <p style="font-size: 16px; font-weight: bold; color: #007bff;">Tixhub Team</p>
+        </div>
+      </div>
+    `
     };
 
     const info = await transporter.sendMail(mailOptions);

@@ -25,13 +25,13 @@ app.use(cors({
 // app.use(bodyParser.json())
 app.use(express.json())
 app.use(bodyParser.urlencoded({extended: true}))
-app.use('/ticketdorm', router)
+app.use('/tixhub', router)
 
 const startServer  = async () => {
    const PORT  = process.env.PORT || 2000
    connectDB()
    try {
-      app.listen(PORT,() => {console.log(`TICKETDORM IS RUNNING ON PORT: ${PORT}`);})
+      app.listen(PORT,() => {console.log(`TIXHUB IS RUNNING ON PORT: ${PORT}`);})
    } catch (error) {
       console.log(error);
    }

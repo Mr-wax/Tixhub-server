@@ -33,7 +33,7 @@ const generateTicketPDF = async (eventDetails, qrCodeData) => {
     borderLineCap: "Round",
   });
 
-  page.drawText(`TicketDorm Group Inc`, {
+  page.drawText(`Tixhub Group Inc`, {
     x: 50,
     y: height - 50,
     size: 11.5,

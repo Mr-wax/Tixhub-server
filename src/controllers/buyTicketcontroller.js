@@ -160,7 +160,7 @@ export const handleCallback = async (req, res) => {
 
       const mailOptions = {
         from: {
-          name: "Ticketdorm",
+          name: "Tixhub",
           address: process.env.EMAIL_USER,
         },
         to: ticket.email,
@@ -264,7 +264,7 @@ export const freeTicket = async (req, res) => {
     const pdfBytes = await generateTicketPDF(eventDetails, qrCodeBuffer);
     const mailOptions = {
       from: {
-        name: "Ticketdorm",
+        name: "Tixhub",
         address: process.env.EMAIL_USER,
       },
       to: email,

@@ -7,7 +7,7 @@ dotenv.config();
 const protectRoute = async (req,res,next) => {
     try {
         if(!jwt) {
-            throw new Error("jsonwebtoke module is not defined")
+            throw new Error("jsonwebtoken module is not defined")
         }
 
         const authHeader = req.headers.authorization;
