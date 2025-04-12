@@ -58,15 +58,28 @@ const sendNewMail = async (email, firstname, res) => {
     to: email,
     subject: "e-Ticket",
     text: `Welcome to Tixhub.`,
-    html: `
-            <h2>Welcome to Ticketdorm, ${firstname}!</h2>
-            <p>Thank you for signing up for our platform. We are excited to have you on board.</p>
-            <p>You can now explore events, buy tickets, and more.</p>
-            <p>If you have any questions, feel free to reply to this email or contact our support team.</p>
-            <p>Happy ticketing!</p>
-            <p>Best regards,</p>
-            <p>The Ticketdorm Team</p>
-        `,
+    html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border-radius: 10px; background-color: #f4f4f4;">
+  
+  <!-- Header -->
+  <div style="text-align: center; background: linear-gradient(135deg, #007bff, #0056b3); padding: 20px; border-radius: 10px 10px 0 0;">
+    <h2 style="color: #fff; margin: 0; font-size: 24px;">Welcome to <span style="color: #ffd700;">Tixhub ${firstname}</span> 🎟️</h2>
+  </div>
+  
+  <!-- Body -->
+  <div style="padding: 20px; background-color: #fff; border-radius: 0 0 10px 10px; text-align: center;">
+    <p style="font-size: 16px; color: #333;">Thank you for signing up! Now you can access exciting events.</p>
+
+    <br/>
+    <p style="font-size: 14px; color: #777;">Best regards,</p>
+    <p style="font-size: 16px; font-weight: bold; color: #007bff;">Tixhub Team</p>
+
+    <!-- Footer -->
+    <div style="margin-top: 20px; font-size: 12px; color: #aaa; text-align: center;">
+      <p>&copy; 2025 Tixhub. All rights reserved.</p>
+    </div>
+  </div>
+</div>
+ `,
   };
 
   const info = await transporter.sendMail(mailOptions);
