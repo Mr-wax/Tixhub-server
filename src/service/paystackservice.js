@@ -15,14 +15,14 @@ const paystack = axios.create({
 
 
 export const initializePayment = async (
-  email,amount
+  email, amount, ticketId, eventId
 ) => {
 
   
   const payload = {
     email,
-    amount:amount * 100,
-    callback_url: "http://ticketdorm.netlify.app/verify-payment/callback?", 
+    amount: amount * 100,
+    callback_url: `http://localhost:5000/api/tickets/verify-payment/event/${eventId}/ticket/${ticketId}/callback`, 
   };
 
   try {

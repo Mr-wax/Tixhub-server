@@ -46,8 +46,6 @@ export const buyTicket = async (req, res) => {
   const { event, buyer, email, phoneNumber } = req.body;
 
   try {
-    const paymentResponse = await initializePayment(email, ticketPrice);
-
     let qrCodeBuffer;
     const type = "General Admission";
     const uniqueCode = generateUniqueCode();
@@ -78,10 +76,12 @@ export const buyTicket = async (req, res) => {
       eventId: eventId,
     });
 
-
     await newTicket.save();
 
     console.log(newTicket);
+
+    // Initialize payment with ticket and event IDs
+    const paymentResponse = await initializePayment(email, ticketPrice, newTicket._id, eventId);
 
     res.status(200).json({
       success: newTicket,
@@ -107,10 +107,7 @@ export const handleCallback = async (req, res) => {
       const { customer } = response.data;
 
       const { ticketId, eventId } = req.params;
-      const ticket = await Ticket.findOne({
-        email: customer.email,
-        _id: ticketId,
-      });
+      const ticket = await Ticket.findById(ticketId);
 
       const event = await Event.findById(eventId, {
         eventLocation: 1,
@@ -144,7 +141,6 @@ export const handleCallback = async (req, res) => {
       const eventDetails = {
         event: ticket.event,
         date: ticket.date,
-        location: ticket.location,
         location: event.eventLocation,
         buyer: ticket.buyer,
         time: ticket.time,
@@ -177,18 +173,41 @@ export const handleCallback = async (req, res) => {
 
       const info = await transporter.sendMail(mailOptions);
 
-      console.log("Email sent: " + info.response, mailOptions);
+      console.log("Email sent successfully:", info.response);
+      console.log("Email details:", {
+        to: ticket.email,
+        subject: "e-Ticket",
+        messageId: info.messageId
+      });
+      
       res.status(200).json({
         success: info.response,
         ticket,
         response,
+        emailSent: true,
+        messageId: info.messageId
       });
     } else {
       console.error("Unexpected response structure:", response);
       res.status(500).json({ error: "Unexpected response structure" });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error in handleCallback:", error);
+    
+    // Check if it's an email-related error
+    if (error.message.includes('email') || error.message.includes('smtp') || error.message.includes('auth')) {
+      console.error("Email service error:", error.message);
+      res.status(500).json({ 
+        error: "Email service error", 
+        details: error.message,
+        emailSent: false 
+      });
+    } else {
+      res.status(500).json({ 
+        error: error.message,
+        emailSent: false 
+      });
+    }
   }
 };
 
@@ -281,14 +300,35 @@ export const freeTicket = async (req, res) => {
 
     const info = await transporter.sendMail(mailOptions);
 
-    console.log("Email sent: " + info.response, mailOptions);
+    console.log("Free ticket email sent successfully:", info.response);
+    console.log("Email details:", {
+      to: email,
+      subject: "e-Ticket",
+      messageId: info.messageId
+    });
+    
     res.status(200).json({
       success: info.response,
       newTicket,
+      emailSent: true,
+      messageId: info.messageId
     });
   } catch (error) {
-    console.error("Error sending email:", error);
-    console.error("Error generating QR code:", error);
-    res.status(500).json({ error: error.message });
+    console.error("Error in freeTicket:", error);
+    
+    // Check if it's an email-related error
+    if (error.message.includes('email') || error.message.includes('smtp') || error.message.includes('auth')) {
+      console.error("Email service error:", error.message);
+      res.status(500).json({ 
+        error: "Email service error", 
+        details: error.message,
+        emailSent: false 
+      });
+    } else {
+      res.status(500).json({ 
+        error: error.message,
+        emailSent: false 
+      });
+    }
   }
 };
