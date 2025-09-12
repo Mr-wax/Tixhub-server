@@ -203,15 +203,24 @@ export const signUp = async (req, res) => {
 };
 
 export const verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
+  const { email } = req.body;
+  const provided = req.body.otp ?? req.body.token ?? req.body.code;
   try {
+    if (!email || provided === undefined || provided === null) {
+      return res.status(400).json({ message: "Email and OTP are required" });
+    }
+
+    const submittedOtp = String(provided).trim();
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ messaage: "Invalid or expired OTP" });
+      return res.status(404).json({ message: "Invalid or expired OTP" });
     }
 
-    if (user.otp !== otp || user.otpExpiry < Date.now()) {
+    const storedOtp = user.otp ? String(user.otp).trim() : null;
+    const isExpired = user.otpExpiry < Date.now();
+
+    if (!storedOtp || submittedOtp !== storedOtp || isExpired) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
@@ -223,9 +232,7 @@ export const verifyOtp = async (req, res) => {
     const accessToken = generateTokenAndSetCookie(user._id, res);
 
     sendNewMail(user.email, user.firstname);
-    res
-      .status(200)
-      .json({ message: "OTP verified successfully.", accessToken,user });
+    res.status(200).json({ message: "OTP verified successfully.", accessToken, user });
   } catch (error) {
     console.error("OTP verification error:", error);
     res.status(500).json({ message: "Server error" });
@@ -360,8 +367,8 @@ export const resendOTP = async (req, res) => {
       return res.status(400).json({ message: "User not found or already verified" });
     }
 
-    // Generate new OTP
-    const newOTP = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate new 4-digit OTP
+    const newOTP = Math.floor(1000 + Math.random() * 9000).toString();
     user.otp = newOTP;
     user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
     await user.save();

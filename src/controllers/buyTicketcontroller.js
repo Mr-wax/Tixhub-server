@@ -165,7 +165,7 @@ export const handleCallback = async (req, res) => {
         attachments: [
           {
             filename: "ticket.pdf",
-            content: pdfBytes,
+            content: Buffer.from(pdfBytes),
             contentType: "application/pdf",
           },
         ],
@@ -292,7 +292,7 @@ export const freeTicket = async (req, res) => {
       attachments: [
         {
           filename: "ticket.pdf",
-          content: pdfBytes,
+          content: Buffer.from(pdfBytes),
           contentType: "application/pdf",
         },
       ],

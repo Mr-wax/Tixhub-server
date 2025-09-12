@@ -18,11 +18,15 @@ export const initializePayment = async (
   email, amount, ticketId, eventId
 ) => {
 
-  
+  // Prefer explicit server base URL, fallback to legacy var, then localhost
+  const serverBaseUrl = process.env.SERVER_BASE_URL || process.env.APP_BASE_URL || "http://localhost:2000/tixhub";
+  // Server route is mounted at /tixhub and tickets router path is singular: /ticket
+  const callbackUrl = `${serverBaseUrl}/ticket/verify-payment/event/${eventId}/ticket/${ticketId}/callback`;
+
   const payload = {
     email,
     amount: amount * 100,
-    callback_url: `http://localhost:5000/api/tickets/verify-payment/event/${eventId}/ticket/${ticketId}/callback`, 
+    callback_url: callbackUrl, 
   };
 
   try {
