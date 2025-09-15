@@ -99,12 +99,21 @@ export const handleCallback = async (req, res) => {
 
   let qrCodeBuffer;
   try {
-    const response = await verifyPayment(reference);
+    if (!reference) {
+      console.error("Missing reference in Paystack callback query params");
+      return res.status(400).json({ message: "Missing payment reference" });
+    }
 
-    console.log("Payment verification response:", response);
-    if (response) {
-      const { status } = response.data;
-      const { customer } = response.data;
+    const verification = await verifyPayment(reference);
+
+    console.log("Paystack verification payload:", {
+      topLevelStatus: verification?.status,
+      txStatus: verification?.data?.status,
+      reference,
+    });
+    if (verification) {
+      const topLevelStatus = verification.status === true;
+      const txStatus = verification.data?.status;
 
       const { ticketId, eventId } = req.params;
       const ticket = await Ticket.findById(ticketId);
@@ -117,7 +126,7 @@ export const handleCallback = async (req, res) => {
         console.error("Event not found with id:", eventId);
         return res.status(404).json({ message: "Event not found" });
       }
-      if (status !== "success") {
+      if (!topLevelStatus || txStatus !== "success") {
         return res.status(400).json({ message: "Payment not successful" });
       }
       
@@ -183,12 +192,12 @@ export const handleCallback = async (req, res) => {
       res.status(200).json({
         success: info.response,
         ticket,
-        response,
+        verification,
         emailSent: true,
         messageId: info.messageId
       });
     } else {
-      console.error("Unexpected response structure:", response);
+      console.error("Unexpected verification structure:", verification);
       res.status(500).json({ error: "Unexpected response structure" });
     }
   } catch (error) {
