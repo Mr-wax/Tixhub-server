@@ -29,6 +29,11 @@ export const initializePayment = async (
     callback_url: callbackUrl, 
   };
 
+  // Log the callback URL for diagnostics
+  try {
+    console.log("Initializing Paystack with callback_url:", callbackUrl);
+  } catch {}
+
   try {
     const response = await paystack.post("/transaction/initialize", payload);
     return response.data;
