@@ -127,6 +127,13 @@ export const handleCallback = async (req, res) => {
         return res.status(404).json({ message: "Event not found" });
       }
       if (!topLevelStatus || txStatus !== "success") {
+        const clientBaseUrl = process.env.CLIENT_BASE_URL;
+        if (clientBaseUrl) {
+          const failedUrl = `${clientBaseUrl.replace(/\/$/, "")}/checkout/failed` +
+            `?reason=${encodeURIComponent("payment_not_successful")}` +
+            `&reference=${encodeURIComponent(reference)}`;
+          return res.redirect(302, failedUrl);
+        }
         return res.status(400).json({ message: "Payment not successful" });
       }
       
@@ -204,6 +211,17 @@ export const handleCallback = async (req, res) => {
         accepted: info.accepted,
       });
       
+      const clientBaseUrl = process.env.CLIENT_BASE_URL;
+      if (clientBaseUrl) {
+        const successUrl = `${clientBaseUrl.replace(/\/$/, "")}/checkout/success` +
+          `?ticketId=${encodeURIComponent(String(ticket._id))}` +
+          `&event=${encodeURIComponent(ticket.event)}` +
+          `&order=${encodeURIComponent(ticket.orderNumber)}` +
+          `&email=${encodeURIComponent(ticket.email)}` +
+          `&messageId=${encodeURIComponent(info.messageId || "")}`;
+        return res.redirect(302, successUrl);
+      }
+
       res.status(200).json({
         success: info.response,
         ticket,
