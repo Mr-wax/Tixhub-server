@@ -145,6 +145,19 @@ export const handleCallback = async (req, res) => {
         },
       });
 
+      // Verify SMTP connection before sending
+      try {
+        await transporter.verify();
+        console.log("SMTP transporter verified");
+      } catch (smtpErr) {
+        console.error("SMTP verification failed:", smtpErr?.message || smtpErr);
+        return res.status(500).json({
+          error: "Email service verification failed",
+          details: smtpErr?.message || String(smtpErr),
+          emailSent: false,
+        });
+      }
+
       qrCodeBuffer = await generateQRCode(`${ticket.buyer}`, `${ticket.event}`);
 
       const eventDetails = {
@@ -186,7 +199,9 @@ export const handleCallback = async (req, res) => {
       console.log("Email details:", {
         to: ticket.email,
         subject: "e-Ticket",
-        messageId: info.messageId
+        messageId: info.messageId,
+        rejected: info.rejected,
+        accepted: info.accepted,
       });
       
       res.status(200).json({
